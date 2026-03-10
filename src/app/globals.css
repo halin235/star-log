@@ -1,0 +1,139 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.css");
+@import "tailwindcss";
+
+:root {
+  --ivory: #fffff0;
+  --white: #ffffff;
+  --gold: #d4af37;
+  --deep-midnight: #0a1128;
+  --silver: #c0c0c0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Pretendard", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background:
+    linear-gradient(to bottom, #0a1128 0%, #141a33 45%, #050815 100%);
+  color: var(--ivory);
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+}
+
+body::before {
+  background-image:
+    /* 작은 실버 점 형태의 별들 */
+    radial-gradient(0.7px 0.7px at 8% 18%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(0.8px 0.8px at 22% 46%, rgba(192, 192, 192, 0.9), transparent 55%),
+    radial-gradient(0.7px 0.7px at 34% 82%, rgba(192, 192, 192, 0.85), transparent 55%),
+    radial-gradient(0.9px 0.9px at 58% 22%, rgba(192, 192, 192, 0.92), transparent 55%),
+    radial-gradient(0.7px 0.7px at 72% 60%, rgba(192, 192, 192, 0.88), transparent 55%),
+    radial-gradient(0.8px 0.8px at 88% 34%, rgba(192, 192, 192, 0.9), transparent 55%),
+    /* 살짝 각진, 조금 더 선명한 실버 별들 (사각 별 느낌) */
+    radial-gradient(1.1px 1.1px at 15% 30%, rgba(192, 192, 192, 0.98), transparent 55%),
+    radial-gradient(1.2px 1.2px at 30% 12%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(1.1px 1.1px at 48% 68%, rgba(192, 192, 192, 0.96), transparent 55%),
+    radial-gradient(1.3px 1.3px at 64% 40%, rgba(192, 192, 192, 0.97), transparent 55%),
+    radial-gradient(1.2px 1.2px at 80% 78%, rgba(192, 192, 192, 0.94), transparent 55%);
+  animation: twinkleSoft 11s ease-in-out infinite alternate;
+}
+
+body::after {
+  background-image:
+    /* 조금 더 크고 선명한 실버 별들 레이어 */
+    radial-gradient(1.2px 1.2px at 12% 72%, rgba(192, 192, 192, 0.96), transparent 55%),
+    radial-gradient(1.4px 1.4px at 28% 28%, rgba(192, 192, 192, 0.94), transparent 55%),
+    radial-gradient(1.3px 1.3px at 46% 52%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(1.6px 1.6px at 68% 24%, rgba(192, 192, 192, 0.98), transparent 55%),
+    radial-gradient(1.5px 1.5px at 82% 50%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(1.7px 1.7px at 90% 18%, rgba(192, 192, 192, 0.99), transparent 55%),
+    radial-gradient(1.3px 1.3px at 56% 88%, rgba(192, 192, 192, 0.93), transparent 55%);
+  animation: twinkleMedium 15s ease-in-out infinite alternate;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--gold) 40%, #ffffff 5%, transparent);
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.card-quiet {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 26px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.ring-gold-soft:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.35),
+    0 0 0 4px rgba(212, 175, 55, 0.18);
+}
+
+.input-glass {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+@keyframes twinkleSoft {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 0.35;
+    transform: scale(1.01) translate3d(-2px, -3px, 0);
+  }
+}
+
+@keyframes twinkleMedium {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(1.02) translate3d(-3px, -4px, 0);
+  }
+}
+
+
