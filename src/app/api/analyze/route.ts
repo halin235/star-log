@@ -11,6 +11,16 @@ const ziwei: any = require('ziwei');
 
 export const runtime = 'nodejs';
 
+const HAN_TO_KOR_STAR: Record<string, string> = {
+  紫微: '자미', 天机: '천기', 太阳: '태양', 武曲: '무곡', 天同: '천동', 廉贞: '염정',
+  天府: '천부', 太阴: '태음', 贪狼: '탐랑', 巨门: '거문', 天相: '천상', 天梁: '천량', 七杀: '칠살', 破军: '파군',
+  陀罗: '타라', 文昌: '문창', 擎羊: '경양', 天刑: '천형', 铃星: '령성',
+};
+
+function toKoreanStarName(name: string): string {
+  return HAN_TO_KOR_STAR[name] ?? name;
+}
+
 function isGender(x: unknown): x is Gender {
   return x === 'm' || x === 'f';
 }
@@ -29,22 +39,33 @@ function parseInput(body: any): AnalyzeInput {
   return { name, birthDate, birthTime, gender };
 }
 
+/** ziwei: Plate는 Birthday 객체를 받고, getPalaces()로 궁 목록을 가져오며 duty(命宮, 夫妻)로 찾음 */
 function getZiweiStars(params: { y: number; m: number; d: number; h: number; gender: Gender }) {
-  const fn = new ziwei.FateNum(params.y, params.m, params.d, params.h, params.gender);
-  const pt = new ziwei.Plate(fn);
+  const birthday = {
+    year: params.y,
+    month: params.m,
+    day: params.d,
+    hour: params.h,
+    minute: 0,
+    second: 0,
+    sex: (params.gender === 'f' ? 0 : 1) as 0 | 1,
+  };
+  const pt = new ziwei.Plate(birthday);
+  const palaces = pt.getPalaces();
+  if (!Array.isArray(palaces)) return { lifeMainStars: [], loveMainStars: [] };
 
   const findPalace = (needle: string) =>
-    pt.palaces.find((p: any) => typeof p?.name === 'string' && p.name.includes(needle));
+    palaces.find((p: any) => typeof p?.duty === 'string' && p.duty.includes(needle));
 
-  const life = findPalace('命') || findPalace('명');
-  const love = findPalace('妻') || findPalace('부처');
+  const life = findPalace('命');
+  const love = findPalace('妻') || findPalace('夫');
 
   const pickStars = (palace: any): string[] => {
     if (!palace?.stars || !Array.isArray(palace.stars)) return [];
     return palace.stars
       .map((s: any) => (typeof s === 'string' ? s : s?.name))
       .filter(Boolean)
-      .map((s: any) => String(s));
+      .map((s: any) => toKoreanStarName(String(s)));
   };
 
   return {
@@ -60,6 +81,12 @@ export async function POST(req: Request) {
 
     const [y, m, d] = input.birthDate.split('-').map((v) => Number(v));
     const [hh, mm] = input.birthTime.split(':').map((v) => Number(v));
+
+    console.log('[Star-Log] 입력 전달 확인', {
+      birthDate: input.birthDate,
+      birthTime: input.birthTime,
+      parsed: { y, m, d, h: hh, mm, gender: input.gender },
+    });
 
     // 사주 (일간/일지)
     const solar = Solar.fromYmdHms(y, m, d, hh, mm, 0);
@@ -97,6 +124,8 @@ export async function POST(req: Request) {
     }
 
     const lifeMainStar = ziweiRes.lifeMainStars[0];
+    console.log('[Star-Log] 자미두수 결과', { mode, lifeMainStars: ziweiRes.lifeMainStars, loveMainStars: ziweiRes.loveMainStars });
+
     const titleParts = buildTitle({ dayGan, lifeMainStar });
     const sections = buildSections({ dayGan, dayPillar, lifeMainStar });
 
