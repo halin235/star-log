@@ -67,6 +67,13 @@ export async function POST(req: Request) {
       bazi: report.bazi,
       ziwei: report.ziwei,
       sections,
+      eightChar: report.eightChar,
+      elementBalance: report.elementBalance,
+      ziWeiPalaces: report.ziWeiPalaces,
+      mainStar: report.mainStar,
+      traits: report.traits,
+      lunarInfo: report.lunarInfo,
+      summaryAdvice: report.summaryAdvice,
     };
 
     return NextResponse.json(res);

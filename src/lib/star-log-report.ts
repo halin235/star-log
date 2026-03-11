@@ -4,7 +4,15 @@
  */
 import { Solar } from 'lunar-javascript';
 
-import type { Gender, ZiweiResult, BaZiResult } from '@/lib/types';
+import type {
+  Gender,
+  ZiweiResult,
+  BaZiResult,
+  EightCharFull,
+  ElementBalance,
+  LunarInfo,
+  ZiWeiPalaceEntry,
+} from '@/lib/types';
 
 // ========== 기본 상수 (한글 매핑) ==========
 const HEAVENLY_STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
@@ -25,6 +33,58 @@ const BRANCH_CN_TO_KR: Record<string, EarthlyBranchKR> = {
   '午': '오', '未': '미', '申': '신', '酉': '유', '戌': '술', '亥': '해',
 };
 
+// 오행 매핑 (천간·지지 → 木火土金水)
+const STEM_ELEMENT: Record<string, string> = {
+  '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+  '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
+};
+const BRANCH_ELEMENT: Record<string, string> = {
+  '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+  '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水',
+};
+
+// 납음 (천간+지지 → 한자명, 표시용)
+const NAYIN_KR: Record<string, string> = {
+  '甲子': '海中金', '乙丑': '海中金', '丙寅': '爐中火', '丁卯': '爐中火',
+  '戊辰': '大林木', '己巳': '大林木', '庚午': '路傍土', '辛未': '路傍土',
+  '壬申': '劍鋒金', '癸酉': '劍鋒金', '甲戌': '山頭火', '乙亥': '山頭火',
+  '丙子': '澗下水', '丁丑': '澗下水', '戊寅': '城頭土', '己卯': '城頭土',
+  '庚辰': '白鑞金', '辛巳': '白鑞金', '壬午': '楊柳木', '癸未': '楊柳木',
+  '甲申': '泉中水', '乙酉': '泉中水', '丙戌': '屋上土', '丁亥': '屋上土',
+  '戊子': '霹靂火', '己丑': '霹靂火', '庚寅': '松柏木', '辛卯': '松柏木',
+  '壬辰': '長流水', '癸巳': '長流水', '甲午': '砂中金', '乙未': '砂中金',
+  '丙申': '山下火', '丁酉': '山下火', '戊戌': '平地木', '己亥': '平地木',
+  '庚子': '壁上土', '辛丑': '壁上土', '壬寅': '金箔金', '癸卯': '金箔金',
+  '甲辰': '覆燈火', '乙巳': '覆燈火', '丙午': '天河水', '丁未': '天河水',
+  '戊申': '大驛土', '己酉': '大驛土', '庚戌': '釵釧金', '辛亥': '釵釧金',
+  '壬子': '桑柘木', '癸丑': '桑柘木', '甲寅': '大溪水', '乙卯': '大溪水',
+  '丙辰': '沙中土', '丁巳': '沙中土', '戊午': '天上火', '己未': '天上火',
+  '庚申': '石榴木', '辛酉': '石榴木', '壬戌': '大海水', '癸亥': '大海水',
+};
+
+const SANGXIAO_KR: Record<string, string> = {
+  '子': '쥐', '丑': '소', '寅': '호랑이', '卯': '토끼', '辰': '용', '巳': '뱀',
+  '午': '말', '未': '양', '申': '원숭이', '酉': '닭', '戌': '개', '亥': '돼지',
+};
+
+/** 14주성별 키워드 (러버블 스타일) */
+const STAR_TRAITS: Record<string, string[]> = {
+  '자미': ['품격', '리더십', '중심'],
+  '천기': ['전략', '학습', '분석'],
+  '태양': ['명료', '영향력', '공정'],
+  '무곡': ['성과', '실행', '인내'],
+  '천동': ['소통', '유연', '친화'],
+  '염정': ['감각', '예술', '감성'],
+  '천부': ['안정', '신뢰', '운영'],
+  '태음': ['차분', '내면', '배려'],
+  '탐랑': ['트렌드', '기획', '연결'],
+  '거문': ['고독', '깊이', '연구'],
+  '천량': ['의리', '보호', '원칙'],
+  '칠살': ['도전', '결단', '행동'],
+  '파군': ['변화', '돌파', '혁신'],
+  '기타': ['다양성', '적응'],
+};
+
 // 자미두수 12궁 (한글)
 const TWELVE_PALACES = [
   '명궁', '형제궁', '부처궁', '자녀궁', '재백궁', '질액궁',
@@ -40,49 +100,97 @@ export type StarLogReport = {
   mode: 'HYBRID' | 'FALLBACK';
   bazi: BaZiResult;
   ziwei: ZiweiResult;
+  eightChar?: EightCharFull;
+  elementBalance?: ElementBalance;
+  ziWeiPalaces?: ZiWeiPalaceEntry[];
+  mainStar?: string;
+  traits?: string[];
+  lunarInfo?: LunarInfo;
+  summaryAdvice?: string;
 };
 
-interface EightCharData {
-  year: { gan: string; zhi: string; full: string };
-  month: { gan: string; zhi: string; full: string };
-  day: { gan: string; zhi: string; full: string };
-  time: { gan: string; zhi: string; full: string };
+// ========== 만세력: lunar-javascript로 사주 팔자 (풀+오행·납음) ==========
+function pillarWithWuxingNayin(gan: string, zhi: string, full: string) {
+  const wuxing = STEM_ELEMENT[gan] || BRANCH_ELEMENT[zhi] || '—';
+  const nayin = NAYIN_KR[gan + zhi] || '—';
+  return { gan, zhi, full, wuxing, nayin };
 }
 
-// ========== 만세력: lunar-javascript로 사주 팔자 ==========
 function getEightCharFromBirth(
   year: number,
   month: number,
   day: number,
   hour: number,
   minute: number
-): EightCharData {
+): EightCharFull {
   const solar = Solar.fromYmdHms(year, month, day, hour, minute, 0);
   const lunar = solar.getLunar();
-  const eightChar = lunar.getEightChar();
+  const ec = lunar.getEightChar();
 
   return {
-    year: {
-      gan: eightChar.getYearGan(),
-      zhi: eightChar.getYearZhi(),
-      full: eightChar.getYear(),
-    },
-    month: {
-      gan: eightChar.getMonthGan(),
-      zhi: eightChar.getMonthZhi(),
-      full: eightChar.getMonth(),
-    },
-    day: {
-      gan: eightChar.getDayGan(),
-      zhi: eightChar.getDayZhi(),
-      full: eightChar.getDay(),
-    },
-    time: {
-      gan: eightChar.getTimeGan(),
-      zhi: eightChar.getTimeZhi(),
-      full: eightChar.getTime(),
-    },
+    year: pillarWithWuxingNayin(ec.getYearGan(), ec.getYearZhi(), ec.getYear()),
+    month: pillarWithWuxingNayin(ec.getMonthGan(), ec.getMonthZhi(), ec.getMonth()),
+    day: pillarWithWuxingNayin(ec.getDayGan(), ec.getDayZhi(), ec.getDay()),
+    time: pillarWithWuxingNayin(ec.getTimeGan(), ec.getTimeZhi(), ec.getTime()),
   };
+}
+
+/** 오행(木火土金水) 비중 계산 — 8글자 천간·지지 합산 */
+function analyzeElementBalance(eightChar: EightCharFull): ElementBalance {
+  const balance: ElementBalance = { 木: 0, 火: 0, 土: 0, 金: 0, 水: 0 };
+  const pillars = [eightChar.year, eightChar.month, eightChar.day, eightChar.time];
+  for (const p of pillars) {
+    const s = STEM_ELEMENT[p.gan];
+    const b = BRANCH_ELEMENT[p.zhi];
+    if (s) balance[s as keyof ElementBalance] = (balance[s as keyof ElementBalance] ?? 0) + 1;
+    if (b) balance[b as keyof ElementBalance] = (balance[b as keyof ElementBalance] ?? 0) + 1;
+  }
+  return balance;
+}
+
+/** 음력·년주·띠 정보 */
+function getLunarInfo(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute: number
+): LunarInfo {
+  const solar = Solar.fromYmdHms(year, month, day, hour, minute, 0);
+  const lunar = solar.getLunar();
+  const ec = lunar.getEightChar();
+  const yearZhi = ec.getYearZhi();
+  return {
+    lunarYear: lunar.getYear(),
+    lunarMonth: lunar.getMonth(),
+    lunarDay: lunar.getDay(),
+    yearGanZhi: ec.getYear(),
+    shengxiao: SANGXIAO_KR[yearZhi] ?? '—',
+  };
+}
+
+/** 주성+오행 기반 총평/조언 문장 */
+function buildSummaryAdvice(mainStar: string, dayGan: string): string {
+  const element = STEM_ELEMENT[dayGan] || '土';
+  const starDesc: Record<string, string> = {
+    '자미': '중심을 잡는 리더십',
+    '천기': '전략과 학습의 두뇌',
+    '태양': '명료한 영향력',
+    '무곡': '성과를 내는 실행력',
+    '천동': '소통과 유연함',
+    '염정': '감각과 예술성',
+    '천부': '안정과 신뢰',
+    '태음': '차분한 내면',
+    '탐랑': '트렌드와 기획력',
+    '거문': '깊이 있는 연구',
+    '천량': '의리와 보호',
+    '칠살': '도전과 결단',
+    '파군': '변화와 돌파',
+  };
+  const desc = starDesc[mainStar] || '다양한 가능성';
+  const elementKr: Record<string, string> = { '木': '목', '火': '火', '土': '土', '金': '金', '水': '水' };
+  const ek = elementKr[element] || element;
+  return `${mainStar}성의 ${desc}과(와) ${ek}행의 기운이 맞물려, 일과 관계 모두에서 균형을 찾아가시면 좋습니다. 강한 부분은 살리고 부족한 오행은 생활 습관과 환경으로 보완해 보세요.`;
 }
 
 // ========== 자미두수: 오행국 ==========
@@ -181,10 +289,10 @@ function analyzeBirthLubble(data: {
   hour: number;
   minute?: number;
 }): {
-  eightChar: EightCharData;
+  eightChar: EightCharFull;
   mainStar: string;
   loveStars: string[];
-  ziWeiPalaces: { palace: string; star: string }[];
+  ziWeiPalaces: ZiWeiPalaceEntry[];
 } {
   const minute = data.minute ?? 0;
   const solar = Solar.fromYmdHms(data.year, data.month, data.day, data.hour, minute, 0);
@@ -210,10 +318,10 @@ function analyzeBirthFallback(data: {
   hour: number;
   minute?: number;
 }): {
-  eightChar: EightCharData;
+  eightChar: EightCharFull;
   mainStar: string;
   loveStars: string[];
-  ziWeiPalaces: { palace: string; star: string }[];
+  ziWeiPalaces: ZiWeiPalaceEntry[];
 } {
   const yearBase = 1984;
   const yearGanIdx = ((data.year - yearBase) % 10 + 10) % 10;
@@ -228,15 +336,15 @@ function analyzeBirthFallback(data: {
   const mkPillar = (offset: number) => {
     const gan = HEAVENLY_STEMS[((seed + offset) % 10 + 10) % 10];
     const zhi = EARTHLY_BRANCHES[((seed + offset) % 12 + 12) % 12];
-    return { gan, zhi, full: `${gan}${zhi}` };
+    return pillarWithWuxingNayin(gan, zhi, `${gan}${zhi}`);
   };
 
-  const eightChar: EightCharData = {
-    year: {
-      gan: HEAVENLY_STEMS[yearGanIdx],
-      zhi: EARTHLY_BRANCHES[yearZhiIdx],
-      full: `${HEAVENLY_STEMS[yearGanIdx]}${EARTHLY_BRANCHES[yearZhiIdx]}`,
-    },
+  const eightChar: EightCharFull = {
+    year: pillarWithWuxingNayin(
+      HEAVENLY_STEMS[yearGanIdx],
+      EARTHLY_BRANCHES[yearZhiIdx],
+      `${HEAVENLY_STEMS[yearGanIdx]}${EARTHLY_BRANCHES[yearZhiIdx]}`
+    ),
     month: mkPillar(3),
     day: mkPillar(7),
     time: mkPillar(11),
@@ -265,10 +373,10 @@ export function getStarLogReport(input: {
   const birth = { year: Y, month: M, day: D, hour: H, minute: 0 };
 
   let result: {
-    eightChar: EightCharData;
+    eightChar: EightCharFull;
     mainStar: string;
     loveStars: string[];
-    ziWeiPalaces: { palace: string; star: string }[];
+    ziWeiPalaces: ZiWeiPalaceEntry[];
   };
 
   try {
@@ -290,9 +398,28 @@ export function getStarLogReport(input: {
     loveMainStars: result.loveStars.length > 0 ? result.loveStars : [],
   };
 
+  const elementBalance = analyzeElementBalance(result.eightChar);
+  let lunarInfo: LunarInfo | undefined;
+  try {
+    lunarInfo = getLunarInfo(Y, M, D, H, 0);
+  } catch {
+    lunarInfo = undefined;
+  }
+
+  const mainStar = result.mainStar || '자미';
+  const traits = STAR_TRAITS[mainStar] ?? STAR_TRAITS['기타'];
+  const summaryAdvice = buildSummaryAdvice(mainStar, dayGan);
+
   return {
     mode: 'HYBRID',
     bazi,
     ziwei,
+    eightChar: result.eightChar,
+    elementBalance,
+    ziWeiPalaces: result.ziWeiPalaces,
+    mainStar,
+    traits,
+    lunarInfo,
+    summaryAdvice,
   };
 }

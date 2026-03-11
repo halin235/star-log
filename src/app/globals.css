@@ -36,34 +36,42 @@ body::after {
   mix-blend-mode: screen;
 }
 
+/* 별 배경: 원본 대비 1.5배(50% 증가) 고정 — 추가 금지 */
 body::before {
   background-image:
-    /* 작은 실버 점 형태의 별들 */
-    radial-gradient(0.7px 0.7px at 8% 18%, rgba(192, 192, 192, 0.95), transparent 55%),
-    radial-gradient(0.8px 0.8px at 22% 46%, rgba(192, 192, 192, 0.9), transparent 55%),
-    radial-gradient(0.7px 0.7px at 34% 82%, rgba(192, 192, 192, 0.85), transparent 55%),
-    radial-gradient(0.9px 0.9px at 58% 22%, rgba(192, 192, 192, 0.92), transparent 55%),
-    radial-gradient(0.7px 0.7px at 72% 60%, rgba(192, 192, 192, 0.88), transparent 55%),
-    radial-gradient(0.8px 0.8px at 88% 34%, rgba(192, 192, 192, 0.9), transparent 55%),
-    /* 살짝 각진, 조금 더 선명한 실버 별들 (사각 별 느낌) */
-    radial-gradient(1.1px 1.1px at 15% 30%, rgba(192, 192, 192, 0.98), transparent 55%),
-    radial-gradient(1.2px 1.2px at 30% 12%, rgba(192, 192, 192, 0.95), transparent 55%),
-    radial-gradient(1.1px 1.1px at 48% 68%, rgba(192, 192, 192, 0.96), transparent 55%),
-    radial-gradient(1.3px 1.3px at 64% 40%, rgba(192, 192, 192, 0.97), transparent 55%),
-    radial-gradient(1.2px 1.2px at 80% 78%, rgba(192, 192, 192, 0.94), transparent 55%);
+    radial-gradient(0.8px 0.8px at 8% 18%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(0.9px 0.9px at 22% 46%, rgba(192, 192, 192, 0.9), transparent 55%),
+    radial-gradient(0.8px 0.8px at 34% 82%, rgba(192, 192, 192, 0.85), transparent 55%),
+    radial-gradient(1.05px 1.05px at 58% 22%, rgba(192, 192, 192, 0.92), transparent 55%),
+    radial-gradient(0.8px 0.8px at 72% 60%, rgba(192, 192, 192, 0.88), transparent 55%),
+    radial-gradient(0.9px 0.9px at 88% 34%, rgba(192, 192, 192, 0.9), transparent 55%),
+    radial-gradient(1.25px 1.25px at 15% 30%, rgba(192, 192, 192, 0.98), transparent 55%),
+    radial-gradient(1.4px 1.4px at 30% 12%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(1.25px 1.25px at 48% 68%, rgba(192, 192, 192, 0.96), transparent 55%),
+    radial-gradient(1.5px 1.5px at 64% 40%, rgba(192, 192, 192, 0.97), transparent 55%),
+    radial-gradient(1.4px 1.4px at 80% 78%, rgba(192, 192, 192, 0.94), transparent 55%),
+    radial-gradient(0.9px 0.9px at 5% 42%, rgba(192, 192, 192, 0.9), transparent 55%),
+    radial-gradient(1.15px 1.15px at 42% 8%, rgba(192, 192, 192, 0.96), transparent 55%),
+    radial-gradient(0.9px 0.9px at 18% 55%, rgba(192, 192, 192, 0.88), transparent 55%),
+    radial-gradient(1.1px 1.1px at 52% 18%, rgba(192, 192, 192, 0.94), transparent 55%),
+    radial-gradient(0.85px 0.85px at 76% 82%, rgba(192, 192, 192, 0.9), transparent 55%),
+    radial-gradient(1.2px 1.2px at 92% 62%, rgba(192, 192, 192, 0.92), transparent 55%);
   animation: twinkleSoft 11s ease-in-out infinite alternate;
 }
 
 body::after {
   background-image:
-    /* 조금 더 크고 선명한 실버 별들 레이어 */
-    radial-gradient(1.2px 1.2px at 12% 72%, rgba(192, 192, 192, 0.96), transparent 55%),
-    radial-gradient(1.4px 1.4px at 28% 28%, rgba(192, 192, 192, 0.94), transparent 55%),
-    radial-gradient(1.3px 1.3px at 46% 52%, rgba(192, 192, 192, 0.95), transparent 55%),
-    radial-gradient(1.6px 1.6px at 68% 24%, rgba(192, 192, 192, 0.98), transparent 55%),
-    radial-gradient(1.5px 1.5px at 82% 50%, rgba(192, 192, 192, 0.95), transparent 55%),
-    radial-gradient(1.7px 1.7px at 90% 18%, rgba(192, 192, 192, 0.99), transparent 55%),
-    radial-gradient(1.3px 1.3px at 56% 88%, rgba(192, 192, 192, 0.93), transparent 55%);
+    radial-gradient(1.4px 1.4px at 12% 72%, rgba(192, 192, 192, 0.96), transparent 55%),
+    radial-gradient(1.6px 1.6px at 28% 28%, rgba(192, 192, 192, 0.94), transparent 55%),
+    radial-gradient(1.5px 1.5px at 46% 52%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(1.85px 1.85px at 68% 24%, rgba(192, 192, 192, 0.98), transparent 55%),
+    radial-gradient(1.75px 1.75px at 82% 50%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(2px 2px at 90% 18%, rgba(192, 192, 192, 0.99), transparent 55%),
+    radial-gradient(1.5px 1.5px at 56% 88%, rgba(192, 192, 192, 0.93), transparent 55%),
+    radial-gradient(1.5px 1.5px at 38% 92%, rgba(192, 192, 192, 0.94), transparent 55%),
+    radial-gradient(1.6px 1.6px at 94% 58%, rgba(192, 192, 192, 0.96), transparent 55%),
+    radial-gradient(1.55px 1.55px at 6% 38%, rgba(192, 192, 192, 0.95), transparent 55%),
+    radial-gradient(1.65px 1.65px at 62% 76%, rgba(192, 192, 192, 0.94), transparent 55%);
   animation: twinkleMedium 15s ease-in-out infinite alternate;
 }
 
@@ -134,6 +142,20 @@ body::after {
     opacity: 0.4;
     transform: scale(1.02) translate3d(-3px, -4px, 0);
   }
+}
+
+@keyframes barFill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.bar-fill {
+  transform-origin: bottom;
+  animation: barFill 1s ease-out forwards;
 }
 
 

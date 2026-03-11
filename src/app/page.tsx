@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ImageDown, Share2, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 import type { AnalyzeInput, AnalyzeResponse } from '@/lib/types';
 
@@ -20,10 +21,6 @@ function defaultInput(): AnalyzeInput {
     birthTime: '10:00',
     gender: 'f',
   };
-}
-
-function modePill(mode: 'HYBRID' | 'FALLBACK') {
-  return mode === 'HYBRID' ? '라이브러리 + DB' : 'DB 폴백';
 }
 
 export default function Page() {
@@ -172,16 +169,11 @@ export default function Page() {
 
         <div className="lg:col-span-7">
           <div className="card-quiet rounded-2xl p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-[14px] font-semibold tracking-[-0.02em] text-[#FFFFFF]">결과</h2>
-                <p className="mt-1 text-[12px] leading-5 text-[#FFFFF0]/90">
-                  “나의 본질(사주)”과 “사회적 페르소나(자미두수)”를 분리된 섹션으로 보여드립니다.
-                </p>
-              </div>
-              <div className="rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-[12px] font-medium text-[#FFFFF0]">
-                SPA
-              </div>
+            <div>
+              <h2 className="text-[14px] font-semibold tracking-[-0.02em] text-[#FFFFFF]">결과</h2>
+              <p className="mt-1 text-[12px] leading-5 text-[#FFFFF0]/90">
+                “나의 본질(사주)”과 “사회적 페르소나(자미두수)”를 분리된 섹션으로 보여드립니다.
+              </p>
             </div>
 
             {!result ? (
@@ -196,14 +188,15 @@ export default function Page() {
                 <div className="rounded-2xl border border-white/12 bg-black/25 p-6 shadow-lg backdrop-blur">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="sm:max-w-[70%]">
-                      <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/55 bg-black/30 px-3 py-1.5 text-[12px] font-medium text-[#FFFFFF]">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37]" />
-                        {modePill(result.mode)}
-                      </div>
-                      <h3 className="mt-3 text-balance text-[22px] font-semibold tracking-[-0.03em] text-[#FFFFFF] sm:text-[24px]">
+                      <h3 className="text-balance text-[22px] font-semibold tracking-[-0.03em] text-[#FFFFFF] sm:text-[24px]">
                         {result.title}
                       </h3>
-                      <div className="mt-1 text-[12px] leading-6 text-[#FFFFF0]/90">{result.subtitle}</div>
+                      <p className="mt-1 text-[12px] leading-6 text-[#FFFFF0]/90">{result.subtitle}</p>
+                      {result.lunarInfo && (
+                        <p className="mt-2 text-[11px] text-[#FFFFF0]/75">
+                          음력 {result.lunarInfo.lunarYear}년 {result.lunarInfo.lunarMonth}월 {result.lunarInfo.lunarDay}일 · {result.lunarInfo.yearGanZhi} · {result.lunarInfo.shengxiao}띠
+                        </p>
+                      )}
                     </div>
 
                   </div>
@@ -224,13 +217,105 @@ export default function Page() {
                     <div className="rounded-xl border border-white/15 bg-black/25 px-4 py-3">
                       <div className="text-[11px] font-medium text-[#FFFFF0]/90">명궁 주성</div>
                       <div className="mt-1 text-[14px] font-semibold tracking-[-0.02em] text-[#FFFFFF]">
-                        {result.ziwei.lifeMainStars[0] || '-'}
+                        {result.mainStar ?? result.ziwei.lifeMainStars[0] ?? '-'}
                       </div>
                     </div>
                   </div>
 
+                  {/* 사주 팔자 4기둥 (년월일시 + 납음) */}
+                  {result.eightChar && (
+                    <div className="mt-6 rounded-2xl border border-white/15 bg-black/24 p-5">
+                      <h4 className="text-[13px] font-semibold tracking-[-0.02em] text-[#FFFFFF]">사주 팔자 (만세력)</h4>
+                      <div className="mt-3 grid grid-cols-4 gap-2">
+                        {[
+                          { label: '년주', p: result.eightChar.year },
+                          { label: '월주', p: result.eightChar.month },
+                          { label: '일주', p: result.eightChar.day },
+                          { label: '시주', p: result.eightChar.time },
+                        ].map(({ label, p }) => (
+                          <div key={label} className="rounded-xl border border-white/15 bg-black/25 py-3 text-center">
+                            <div className="text-[10px] text-[#FFFFF0]/80">{label}</div>
+                            <div className="mt-1 text-[14px] font-semibold text-[#FFFFFF]">{p.full}</div>
+                            {p.nayin && <div className="mt-0.5 text-[10px] text-[#D4AF37]">{p.nayin}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 오행 분포 (목화토금수) */}
+                  {result.elementBalance && (
+                    <div className="mt-6 rounded-2xl border border-white/15 bg-black/24 p-5">
+                      <h4 className="text-[13px] font-semibold tracking-[-0.02em] text-[#FFFFFF]">오행 분포</h4>
+                      <div className="mt-3 flex gap-2">
+                        {[
+                          { key: '木', label: '木', color: 'bg-emerald-600/90' },
+                          { key: '火', label: '火', color: 'bg-amber-500/90' },
+                          { key: '土', label: '土', color: 'bg-amber-800/80' },
+                          { key: '金', label: '金', color: 'bg-[#D4AF37]/90' },
+                          { key: '水', label: '水', color: 'bg-blue-800/90' },
+                        ].map(({ key, label, color }) => {
+                          const val = result.elementBalance[key] ?? 0;
+                          const maxVal = 8;
+                          const pct = Math.min(100, maxVal ? (val / maxVal) * 100 : 0);
+                          return (
+                            <div key={key} className="flex flex-1 flex-col items-center">
+                              <div className="flex h-14 w-full flex-col justify-end overflow-hidden rounded-md bg-white/10">
+                                <motion.div
+                                  className={`w-full rounded-md ${color}`}
+                                  initial={{ height: 0 }}
+                                  animate={{ height: `${pct}%` }}
+                                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                                  style={{ minHeight: val ? 4 : 0 }}
+                                />
+                              </div>
+                              <span className="mt-1.5 text-[10px] text-[#FFFFF0]/90">{label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 12궁 명반 (주성·보좌·살성 포함) */}
+                  {result.ziWeiPalaces && result.ziWeiPalaces.length > 0 && (
+                    <div className="mt-6 rounded-2xl border border-white/15 bg-black/24 p-5">
+                      <h4 className="text-[13px] font-semibold tracking-[-0.02em] text-[#FFFFFF]">12궁 명반</h4>
+                      <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                        {result.ziWeiPalaces.map((entry) => {
+                          const isMing = entry.palace === '명궁';
+                          return (
+                            <div
+                              key={entry.palace}
+                              className={`rounded-xl border p-3 ${
+                                isMing ? 'border-[#D4AF37]/50 bg-black/35 ring-1 ring-[#D4AF37]/30' : 'border-white/15 bg-black/25'
+                              }`}
+                            >
+                              <div className="text-[10px] text-[#FFFFF0]/80">{entry.palace}</div>
+                              <div className="mt-1 text-[12px] font-medium text-[#FFFFFF]">{entry.star || '—'}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 주성 키워드(트레이트) */}
+                  {result.traits && result.traits.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {result.traits.map((t) => (
+                        <span
+                          key={t}
+                          className="rounded-full border border-[#D4AF37]/40 bg-black/30 px-3 py-1 text-[11px] font-medium text-[#D4AF37]"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="mt-6 space-y-4">
-                    {result.sections.map((s) => (
+                        {result.sections.map((s) => (
                       <div key={s.label} className="rounded-2xl border border-white/15 bg-black/24 p-5">
                         <div className="text-[11px] font-semibold tracking-[-0.01em] text-[#FFFFF0]/90">
                           {s.label}
@@ -250,6 +335,16 @@ export default function Page() {
                       </div>
                     ))}
                   </div>
+
+                  {/* 총평·조언 (하단 가독 레이아웃) */}
+                  {result.summaryAdvice && (
+                    <div className="mt-6 rounded-2xl border border-[#D4AF37]/25 bg-black/30 p-6">
+                      <h4 className="text-[13px] font-semibold tracking-[-0.02em] text-[#D4AF37]">총평 및 조언</h4>
+                      <p className="mt-3 text-[15px] leading-7 text-[#FFFFF0] font-normal tracking-[-0.01em]">
+                        {result.summaryAdvice}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

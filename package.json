@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.27",
+    "framer-motion": "^12.35.2",
     "lucide-react": "^0.577.0",
     "lunar-javascript": "^1.7.7",
     "next": "^16.1.6",
