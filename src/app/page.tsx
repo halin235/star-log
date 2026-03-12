@@ -255,7 +255,7 @@ export default function Page() {
                           { key: '金', label: '金', color: 'bg-[#D4AF37]/90' },
                           { key: '水', label: '水', color: 'bg-blue-800/90' },
                         ].map(({ key, label, color }) => {
-                          const val = result.elementBalance[key] ?? 0;
+                          const val = (result.elementBalance ?? {})[key] ?? 0;
                           const maxVal = 8;
                           const pct = Math.min(100, maxVal ? (val / maxVal) * 100 : 0);
                           return (
