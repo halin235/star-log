@@ -188,7 +188,7 @@ function buildSummaryAdvice(mainStar: string, dayGan: string): string {
     '파군': '변화와 돌파',
   };
   const desc = starDesc[mainStar] || '다양한 가능성';
-  const elementKr: Record<string, string> = { '木': '목', '火': '火', '土': '土', '金': '金', '水': '水' };
+  const elementKr: Record<string, string> = { '木': '목', '火': '화', '土': '토', '金': '금', '水': '수' };
   const ek = elementKr[element] || element;
   return `${mainStar}성의 ${desc}과(와) ${ek}행의 기운이 맞물려, 일과 관계 모두에서 균형을 찾아가시면 좋습니다. 강한 부분은 살리고 부족한 오행은 생활 습관과 환경으로 보완해 보세요.`;
 }
@@ -367,10 +367,11 @@ export function getStarLogReport(input: {
   M: number;
   D: number;
   H: number;
+  Min?: number;
   G: Gender;
 }): StarLogReport {
-  const { Y, M, D, H } = input;
-  const birth = { year: Y, month: M, day: D, hour: H, minute: 0 };
+  const { Y, M, D, H, Min = 0 } = input;
+  const birth = { year: Y, month: M, day: D, hour: H, minute: Min };
 
   let result: {
     eightChar: EightCharFull;

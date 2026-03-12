@@ -17,8 +17,8 @@ body {
 body {
   font-family: "Pretendard", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  background: #0a1128 url("/main-bg.jpg") no-repeat center top fixed;
-  background-size: cover;
+  /* 배경 이미지는 layout.tsx의 전용 레이어에서 처리 (z-index 충돌 방지) */
+  background: #0a1128;
   color: var(--ivory);
   letter-spacing: -0.01em;
   position: relative;

@@ -9,7 +9,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased relative">
+        {/* 배경 이미지: 가장 뒤 레이어 (::before/::after 오버레이·별보다 뒤) */}
+        <div
+          className="fixed inset-0 -z-[2] bg-[#0a1128] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/main-bg.jpg')" }}
+          aria-hidden
+        />
+        <div className="relative z-10">{children}</div>
+      </body>
     </html>
   );
 }

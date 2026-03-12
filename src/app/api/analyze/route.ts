@@ -31,16 +31,16 @@ export async function POST(req: Request) {
     const input = parseInput(body);
 
     const [y, m, d] = input.birthDate.split('-').map((v) => Number(v));
-    const [hh] = input.birthTime.split(':').map((v) => Number(v));
+    const [hh, mm] = input.birthTime.split(':').map((v) => Number(v));
 
     console.log('[Star-Log] 입력 전달 확인', {
       birthDate: input.birthDate,
       birthTime: input.birthTime,
-      parsed: { y, m, d, h: hh, gender: input.gender },
+      parsed: { y, m, d, h: hh, min: mm, gender: input.gender },
     });
 
     // 러버블 로직 전용: 수학적 공식 + 한글 매핑 (ziwei 라이브러리 미사용)
-    const report = getStarLogReport({ Y: y, M: m, D: d, H: hh, G: input.gender });
+    const report = getStarLogReport({ Y: y, M: m, D: d, H: hh, Min: mm ?? 0, G: input.gender });
 
     const lifeMainStar = report.ziwei.lifeMainStars[0];
     console.log('[Star-Log] 자미두수 결과', {
