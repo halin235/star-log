@@ -17,15 +17,25 @@ body {
 body {
   font-family: "Pretendard", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  background:
-    linear-gradient(to bottom, #0a1128 0%, #141a33 45%, #050815 100%);
+  background: #0a1128 url("/main-bg.jpg") no-repeat center top fixed;
+  background-size: cover;
   color: var(--ivory);
   letter-spacing: -0.01em;
   position: relative;
   overflow-x: hidden;
+  min-height: 100%;
 }
 
-body::before,
+/* 연한 검은색 오버레이 — 가독성 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: -1;
+}
+
 body::after {
   content: "";
   position: fixed;
@@ -34,10 +44,11 @@ body::after {
   background-repeat: no-repeat;
   opacity: 0.65;
   mix-blend-mode: screen;
+  z-index: -1;
 }
 
 /* 별 배경: 원본 대비 1.5배(50% 증가) 고정 — 추가 금지 */
-body::before {
+body::after {
   background-image:
     radial-gradient(0.8px 0.8px at 8% 18%, rgba(192, 192, 192, 0.95), transparent 55%),
     radial-gradient(0.9px 0.9px at 22% 46%, rgba(192, 192, 192, 0.9), transparent 55%),
@@ -55,12 +66,7 @@ body::before {
     radial-gradient(0.9px 0.9px at 18% 55%, rgba(192, 192, 192, 0.88), transparent 55%),
     radial-gradient(1.1px 1.1px at 52% 18%, rgba(192, 192, 192, 0.94), transparent 55%),
     radial-gradient(0.85px 0.85px at 76% 82%, rgba(192, 192, 192, 0.9), transparent 55%),
-    radial-gradient(1.2px 1.2px at 92% 62%, rgba(192, 192, 192, 0.92), transparent 55%);
-  animation: twinkleSoft 11s ease-in-out infinite alternate;
-}
-
-body::after {
-  background-image:
+    radial-gradient(1.2px 1.2px at 92% 62%, rgba(192, 192, 192, 0.92), transparent 55%),
     radial-gradient(1.4px 1.4px at 12% 72%, rgba(192, 192, 192, 0.96), transparent 55%),
     radial-gradient(1.6px 1.6px at 28% 28%, rgba(192, 192, 192, 0.94), transparent 55%),
     radial-gradient(1.5px 1.5px at 46% 52%, rgba(192, 192, 192, 0.95), transparent 55%),
@@ -72,7 +78,7 @@ body::after {
     radial-gradient(1.6px 1.6px at 94% 58%, rgba(192, 192, 192, 0.96), transparent 55%),
     radial-gradient(1.55px 1.55px at 6% 38%, rgba(192, 192, 192, 0.95), transparent 55%),
     radial-gradient(1.65px 1.65px at 62% 76%, rgba(192, 192, 192, 0.94), transparent 55%);
-  animation: twinkleMedium 15s ease-in-out infinite alternate;
+  animation: twinkleSoft 11s ease-in-out infinite alternate;
 }
 
 ::selection {
